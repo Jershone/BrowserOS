@@ -1,20 +1,38 @@
 # BrowserOS
 
-Obsidian Glass browser desktop running in GitHub Codespaces.
+A KDE Plasma-inspired desktop shell built with React, TypeScript and Vite. It is designed to feel like a small desktop environment in a browser, with draggable app windows on laptop, touch-friendly full-screen windows on phone, a top app dock, a bottom panel and a session Task Manager.
 
-## Run
-Open the Codespace terminal and run:
+## Deploy to GitHub Pages
 
-    npm run dev:all
+The GitHub Actions workflow builds the Vite app and publishes `dist/` to GitHub Pages whenever `main` changes.
 
-Open forwarded port **5173**. The FastAPI backend runs on port **8000**. Keep both Codespaces ports private.
+If Pages is not already configured, open **Repository → Settings → Pages** and set **Build and deployment → Source** to **GitHub Actions**.
 
-## Stack
+## Run locally
+
+```bash
+npm install
+npm run dev
+```
+
+## Included desktop windows
+
+- Browser window with an in-window page frame (some websites block embedding).
+- Spotify player using Spotify's embedded player.
+- Word-style text editor with local browser storage and text export.
+- PowerPoint-style slide editor with local browser storage.
+- Terminal preview, file manager, desktop Settings and Task Manager.
+- Window focus, drag, minimize, maximize, close and app launcher.
+
+## Important runtime boundary
+
+The GitHub Pages build is a **static browser desktop shell**. It does not host a Linux kernel, execute native Linux binaries, or expose the host computer's real processes. The current Terminal and Files windows are previews/local browser storage, and Task Manager lists BrowserOS windows only. Spotify playback is embedded; the Word and PowerPoint windows are built-in editors, not Microsoft's native Office applications.
+
+A genuine Linux terminal, package manager, filesystem and native Linux desktop applications require a separate Linux VM/runtime or remote Linux host. GitHub Pages alone cannot run that server process. The app UI is structured so that a future Linux runtime can be connected without presenting preview data as real system processes.
+
+## Technology
+
 - React + TypeScript + Vite
-- FastAPI system-information and workspace API
-- Lucide icons and custom Obsidian Glass styling
-
-## Current status
-The desktop shell, app launcher, dock, responsive layout, health indicator, system metrics and workspace file listing are implemented. Terminal is currently a safe command-preview UI, not arbitrary remote shell execution. AI Studio is a placeholder until a private Ollama endpoint is configured. Spotify opens the official Spotify web player.
-
-Do not expose the API publicly without authentication. Do not expose an unauthenticated Ollama endpoint to the internet.
+- Lucide icons
+- Responsive desktop window manager and CSS theme
+- GitHub Actions + GitHub Pages
