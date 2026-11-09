@@ -1,1 +1,23 @@
-{"name":"BrowserOS Cloud","image":"mcr.microsoft.com/devcontainers/python:1-3.12-bookworm","forwardPorts":[5173,8000],"portsAttributes":{"5173":{"label":"BrowserOS","onAutoForward":"openBrowser","visibility":"private"},"8000":{"label":"BrowserOS API","visibility":"private"}},"postCreateCommand":"npm install && pip install -r requirements.txt"}
+{
+  "name": "BrowserOS Linux Desktop",
+  "build": { "dockerfile": "Dockerfile" },
+  "forwardPorts": [5173, 8000, 6080],
+  "portsAttributes": {
+    "5173": {
+      "label": "BrowserOS Control Panel",
+      "onAutoForward": "notify",
+      "visibility": "private"
+    },
+    "8000": {
+      "label": "BrowserOS API",
+      "visibility": "private"
+    },
+    "6080": {
+      "label": "BrowserOS Linux Desktop (noVNC)",
+      "onAutoForward": "openBrowser",
+      "visibility": "private"
+    }
+  },
+  "postCreateCommand": "npm install && pip install -r requirements.txt",
+  "postStartCommand": "bash .devcontainer/start-desktop.sh"
+}
