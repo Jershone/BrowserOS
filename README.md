@@ -1,38 +1,46 @@
 # BrowserOS
 
-A KDE Plasma-inspired desktop shell built with React, TypeScript and Vite. It is designed to feel like a small desktop environment in a browser, with draggable app windows on laptop, touch-friendly full-screen windows on phone, a top app dock, a bottom panel and a session Task Manager.
+BrowserOS now has two parts:
 
-## Deploy to GitHub Pages
+1. A React/TypeScript desktop control panel (port 5173).
+2. A real Linux XFCE desktop running inside a GitHub Codespace and streamed to the browser with TigerVNC + noVNC (port 6080).
 
-The GitHub Actions workflow builds the Vite app and publishes `dist/` to GitHub Pages whenever `main` changes.
+## Start the real Linux desktop
 
-If Pages is not already configured, open **Repository → Settings → Pages** and set **Build and deployment → Source** to **GitHub Actions**.
+1. Open this repository in a GitHub Codespace.
+2. When prompted, allow the dev container to rebuild. The custom image installs XFCE, Chromium, LibreOffice Writer/Impress, Thunar, XFCE Terminal and Task Manager.
+3. Wait for the post-start script to finish.
+4. Open the **Ports** tab and open **BrowserOS Linux Desktop (noVNC)** on port **6080**.
+5. If needed, append `/vnc.html?autoconnect=true&resize=scale` to the forwarded URL and press **Connect**.
 
-## Run locally
+The forwarded port is configured as private. Keep it private; do not publish an unauthenticated remote desktop.
+
+## Real Linux applications
+
+The XFCE desktop has launchers for:
+- Chromium browser
+- LibreOffice Writer (Word-compatible document editor)
+- LibreOffice Impress (PowerPoint-compatible presentation editor)
+- XFCE Terminal
+- Thunar file manager
+- XFCE Task Manager
+- Spotify Web Player (runs in Chromium)
+
+These are actual Linux processes running in the Codespace container. Writer and Impress are Office-compatible alternatives, not Microsoft's proprietary Word/PowerPoint binaries. Spotify is the official web player in a Chromium app window.
+
+## Codespaces runtime
+
+A Codespace is a remote Linux development container, not a permanent personal cloud PC. It runs only while the Codespace is active and may stop after its configured idle timeout. Its compute/storage usage is subject to the user's GitHub Codespaces quota and plan. Files in the Codespace workspace persist across stop/start, but processes and the graphical session must be started again.
+
+The Codespace desktop is accessed through GitHub's forwarded port. The React/Vite site on port 5173 and FastAPI API on port 8000 are separate from the noVNC Linux desktop on port 6080.
+
+## GitHub Pages
+
+GitHub Pages can host the static React control panel, but it cannot host or keep the Linux desktop process alive. The actual desktop must be accessed through the running Codespace's private forwarded port.
+
+## Build locally
 
 ```bash
 npm install
 npm run dev
 ```
-
-## Included desktop windows
-
-- Browser window with an in-window page frame (some websites block embedding).
-- Spotify player using Spotify's embedded player.
-- Word-style text editor with local browser storage and text export.
-- PowerPoint-style slide editor with local browser storage.
-- Terminal preview, file manager, desktop Settings and Task Manager.
-- Window focus, drag, minimize, maximize, close and app launcher.
-
-## Important runtime boundary
-
-The GitHub Pages build is a **static browser desktop shell**. It does not host a Linux kernel, execute native Linux binaries, or expose the host computer's real processes. The current Terminal and Files windows are previews/local browser storage, and Task Manager lists BrowserOS windows only. Spotify playback is embedded; the Word and PowerPoint windows are built-in editors, not Microsoft's native Office applications.
-
-A genuine Linux terminal, package manager, filesystem and native Linux desktop applications require a separate Linux VM/runtime or remote Linux host. GitHub Pages alone cannot run that server process. The app UI is structured so that a future Linux runtime can be connected without presenting preview data as real system processes.
-
-## Technology
-
-- React + TypeScript + Vite
-- Lucide icons
-- Responsive desktop window manager and CSS theme
-- GitHub Actions + GitHub Pages
