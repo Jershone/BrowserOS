@@ -12,4 +12,4 @@ if ! sudo -n true 2>/dev/null; then
   exit 1
 fi
 
-exec sudo -n synaptic
+exec sudo -n --preserve-env=DISPLAY,XAUTHORITY synaptic
