@@ -62,17 +62,27 @@ jobs:
             pgrep -a xfce4-panel
             pgrep -a plank
 
-            # Ensure an actual Thunar window and real Terminal window exist.
+            # Ensure actual native Thunar and Terminal top-level windows exist.
             wmctrl -lx | grep -i thunar
             wmctrl -l | grep -i "BrowserOS Terminal"
 
-            # Ensure the custom wallpaper and bottom-positioned XFCE panel applied.
+            # Check that both real windows were positioned in the intended layout.
+            thunar_geometry="$(wmctrl -lG | awk 'tolower($0) ~ /thunar/ {print $3, $4, $5, $6; exit}')"
+            terminal_geometry="$(wmctrl -lG | awk 'tolower($0) ~ /browseros terminal/ {print $3, $4, $5, $6; exit}')"
+            read -r tx ty tw th <<< "$thunar_geometry"
+            read -r cx cy cw ch <<< "$terminal_geometry"
+            test "$tx" -ge 70 && test "$ty" -ge 80 && test "$tw" -ge 600 && test "$th" -ge 400
+            test "$cx" -ge 750 && test "$cy" -ge 250 && test "$cw" -ge 650 && test "$ch" -ge 400
+
+            # Ensure custom wallpaper, clean desktop and one bottom system panel.
             grep -q "browseros-wallpaper.svg" /home/vscode/.cache/browseros-wallpaper-settings.txt
             grep -q "p=12" /home/vscode/.cache/browseros-panel-settings.txt
+            test "$(xfconf-query -c xfce4-desktop -p /desktop-icons/style)" = "0"
+            ! xfconf-query -c xfce4-panel -p /panels -a 2>/dev/null | grep -qE '(^|[[:space:]])2([[:space:]]|$)'
 
             DISPLAY=:1 import -window root /tmp/browseros-desktop.png
             test -s /tmp/browseros-desktop.png
-            echo "PASS: XFCE, native apps, live windows, custom wallpaper, bottom panel and noVNC are working."
+            echo "PASS: XFCE, native apps, correctly placed native windows, custom wallpaper, clean desktop, single dock, bottom panel and noVNC are working."
           '
 
       - name: Collect desktop diagnostics
