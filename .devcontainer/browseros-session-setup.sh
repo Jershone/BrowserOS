@@ -44,8 +44,9 @@ write_app "browseros-files" "Files" "thunar" "system-file-manager" "Linux file m
 write_app "browseros-task-manager" "Task Manager" "xfce4-taskmanager" "utilities-system-monitor" "Linux process manager"
 write_app "browseros-settings" "Settings" "xfce4-settings-manager" "preferences-system" "Desktop settings"
 write_app "browseros-editor" "Text Editor" "mousepad" "accessories-text-editor" "Linux text editor"
+write_app "browseros-software" "Software Manager" "xfce4-terminal --title=Software\ Manager --command='sudo synaptic'" "synaptic" "Install and remove real Debian Linux packages"
 
-for id in browseros-chromium browseros-writer browseros-impress browseros-terminal browseros-files browseros-task-manager browseros-settings; do
+for id in browseros-chromium browseros-writer browseros-impress browseros-terminal browseros-files browseros-task-manager browseros-settings browseros-software; do
   ln -sf "$APP_DIR/$id.desktop" "$HOME_DIR/Desktop/$id.desktop"
 done
 
