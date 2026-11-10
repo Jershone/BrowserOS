@@ -91,8 +91,10 @@ set_xfconf xfce4-desktop /desktop-icons/style int "0"
 set_xfconf xfce4-panel /panels/panel-1/position string "p=12;x=800;y=0"
 set_xfconf xfce4-panel /panels/panel-1/length int "100"
 set_xfconf xfce4-panel /panels/panel-1/length-adjust bool "false"
-set_xfconf xfce4-panel /panels/panel-1/size int "30"
+set_xfconf xfce4-panel /panels/panel-1/size int "26"
 set_xfconf xfce4-panel /panels/panel-1/position-locked bool "true"
+# Keep XFCE's system panel available but hidden; Plank is the visible Dock.
+set_xfconf xfce4-panel /panels/panel-1/autohide-behavior int "2"
 
 # The base devcontainer has an inherited second mini-panel. Remove it so
 # Plank is the only centered dock and XFCE panel-1 is the bottom system bar.
@@ -121,8 +123,12 @@ if gsettings list-schemas 2>/dev/null | grep -q '^net.launchpad.plank.dock.setti
   gsettings set "$PLANK_SCHEMA" position "'bottom'" || true
   gsettings set "$PLANK_SCHEMA" alignment "'center'" || true
   gsettings set "$PLANK_SCHEMA" items-alignment "'center'" || true
-  gsettings set "$PLANK_SCHEMA" icon-size "42" || true
-  gsettings set "$PLANK_SCHEMA" offset "38" || true
+  # macOS-inspired floating Dock: larger icons, magnification and a glass-like
+  # transparent background, with a small gap from the screen edge.
+  gsettings set "$PLANK_SCHEMA" icon-size "54" || true
+  gsettings set "$PLANK_SCHEMA" zoom-enabled "true" || true
+  gsettings set "$PLANK_SCHEMA" zoom-percent "155" || true
+  gsettings set "$PLANK_SCHEMA" offset "12" || true
   gsettings set "$PLANK_SCHEMA" hide-mode "'intelligent'" || true
   gsettings set "$PLANK_SCHEMA" theme "'Transparent'" || true
   gsettings set "$PLANK_SCHEMA" show-dock-item "false" || true
