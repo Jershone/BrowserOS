@@ -15,7 +15,7 @@ This is not a JavaScript operating-system simulation:
 
 1. Open this repository: https://github.com/Jershone/BrowserOS
 2. Create a Codespace on the `main` branch, or open your existing Codespace.
-3. After pulling these changes, run **Codespaces: Rebuild Container** from the Command Palette. This is required because the desktop packages are installed in the Docker image.
+3. For a new Codespace, the Docker image builds automatically. For an existing Codespace, pull the latest `main` changes and run **Codespaces: Rebuild Container** from the Command Palette. This is required because the desktop packages are installed in the Docker image.
 4. Wait for the container rebuild and the post-start command. It launches XFCE, TigerVNC and noVNC.
 5. Codespaces automatically forwards port **6080** and opens the browser desktop. If it does not, open the **Ports** tab and open **BrowserOS Linux Desktop**.
 6. The noVNC page connects to the VNC desktop. If needed, use `/vnc.html?autoconnect=true&resize=scale` on the forwarded port URL.
@@ -39,7 +39,7 @@ The desktop starts with Thunar and Terminal open, a dark Arc window theme, Papir
 ## Runtime and persistence
 
 - The Linux desktop runs only while the Codespace is running. Codespaces can stop after an idle timeout.
-- Files saved under the Codespaces workspace/home persist according to the Codespaces storage lifecycle; live graphical processes are restarted when the container starts again.
+- Treat the desktop session as temporary: open windows, running processes and unsaved work disappear when the Codespace stops or rebuilds. Files in the Codespaces workspace may persist, but do not rely on that for this first test.
 - The noVNC screen is a remote desktop stream, not an iframe for each app.
 - GitHub Pages only hosts the static project/launcher page. It does not host the running Linux desktop.
 
