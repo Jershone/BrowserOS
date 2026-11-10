@@ -22,3 +22,6 @@ COPY wallpaper.svg /usr/share/backgrounds/browseros-wallpaper.svg
 COPY browseros-session-setup.sh /usr/local/bin/browseros-session-setup
 RUN chmod 0755 /usr/local/bin/browseros-session-setup
 
+
+COPY browser-os /usr/local/bin/browser-os
+RUN chmod 0755 /usr/local/bin/browser-os
