@@ -4,6 +4,21 @@ set -euo pipefail
 export DISPLAY=:1
 mkdir -p "$HOME/.vnc" "$HOME/.config/autostart"
 
+# GNOME Software talks to PackageKit over the system D-Bus. Containers do not
+# boot systemd, so Codespaces must start the system bus explicitly. The
+# devcontainer user has passwordless sudo for this system-level service.
+if [ ! -S /run/dbus/system_bus_socket ]; then
+  sudo -n mkdir -p /run/dbus
+  sudo -n dbus-daemon --system --fork
+fi
+
+# Fail early with a useful message instead of showing an App Store window
+# that cannot connect to PackageKit.
+if [ ! -S /run/dbus/system_bus_socket ]; then
+  echo "System D-Bus did not start; GNOME Software cannot connect to PackageKit." >&2
+  exit 1
+fi
+
 cat > "$HOME/.vnc/xstartup" <<'XSTART'
 #!/bin/sh
 unset SESSION_MANAGER
