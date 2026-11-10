@@ -1,7 +1,11 @@
 {
   "name": "BrowserOS Real Linux Desktop",
-  "build": { "dockerfile": "Dockerfile" },
-  "forwardPorts": [6080],
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "forwardPorts": [
+    6080
+  ],
   "portsAttributes": {
     "6080": {
       "label": "BrowserOS Linux Desktop",
@@ -9,5 +13,6 @@
       "visibility": "private"
     }
   },
-  "postStartCommand": "bash .devcontainer/start-desktop.sh"
+  "postStartCommand": "bash .devcontainer/start-desktop.sh",
+  "postCreateCommand": "npm install --no-audit --no-fund"
 }
