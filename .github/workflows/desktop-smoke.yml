@@ -54,6 +54,8 @@ jobs:
             command -v xfce4-terminal
             command -v xfce4-taskmanager
             command -v synaptic
+            command -v gnome-software
+            command -v packagekitd
             command -v tigervncserver
             command -v websockify
             test -f /usr/share/novnc/vnc.html
