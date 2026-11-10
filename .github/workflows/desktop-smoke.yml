@@ -56,6 +56,8 @@ jobs:
             command -v synaptic
             command -v gnome-software
             command -v packagekitd
+            test -S /run/dbus/system_bus_socket
+            busctl --system list >/dev/null
             command -v tigervncserver
             command -v websockify
             command -v browser-os
