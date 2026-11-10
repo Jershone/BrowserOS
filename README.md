@@ -1,46 +1,57 @@
 # BrowserOS
 
-BrowserOS now has two parts:
+BrowserOS is a **real Linux desktop session** running inside a GitHub Codespaces development container and streamed to a browser with TigerVNC + noVNC. The desktop is XFCE, styled to match the supplied BrowserOS reference image.
 
-1. A React/TypeScript desktop control panel (port 5173).
-2. A real Linux XFCE desktop running inside a GitHub Codespace and streamed to the browser with TigerVNC + noVNC (port 6080).
+This is not a JavaScript operating-system simulation:
+- The visible windows are native Linux windows managed by XFCE.
+- The terminal is a real shell in the Codespaces Linux container.
+- Thunar browses the real container filesystem.
+- Chromium, LibreOffice Writer, LibreOffice Impress and XFCE Task Manager are installed Linux programs.
+- The XFCE task manager lists actual processes in the Codespaces container.
 
-## Start the real Linux desktop
+**Kernel note:** a Codespaces dev container is a Linux container and shares the host's Linux kernel. It is a real Linux userspace/desktop with real Linux processes, but it does not boot a separate VM kernel inside Codespaces.
 
-1. Open this repository in a GitHub Codespace.
-2. When prompted, allow the dev container to rebuild. The custom image installs XFCE, Chromium, LibreOffice Writer/Impress, Thunar, XFCE Terminal and Task Manager.
-3. Wait for the post-start script to finish.
-4. Open the **Ports** tab and open **BrowserOS Linux Desktop (noVNC)** on port **6080**.
-5. If needed, append `/vnc.html?autoconnect=true&resize=scale` to the forwarded URL and press **Connect**.
+## Open the real desktop
 
-The forwarded port is configured as private. Keep it private; do not publish an unauthenticated remote desktop.
+1. Open this repository: https://github.com/Jershone/BrowserOS
+2. Create a Codespace on the `main` branch, or open your existing Codespace.
+3. After pulling these changes, run **Codespaces: Rebuild Container** from the Command Palette. This is required because the desktop packages are installed in the Docker image.
+4. Wait for the container rebuild and the post-start command. It launches XFCE, TigerVNC and noVNC.
+5. Codespaces automatically forwards port **6080** and opens the browser desktop. If it does not, open the **Ports** tab and open **BrowserOS Linux Desktop**.
+6. The noVNC page connects to the VNC desktop. If needed, use `/vnc.html?autoconnect=true&resize=scale` on the forwarded port URL.
 
-## Real Linux applications
+Keep port 6080 **Private**. The VNC server itself listens only on localhost inside the container; the browser entry point is the Codespaces forwarded port. Do not change it to Public.
 
-The XFCE desktop has launchers for:
-- Chromium browser
-- LibreOffice Writer (Word-compatible document editor)
-- LibreOffice Impress (PowerPoint-compatible presentation editor)
-- XFCE Terminal
-- Thunar file manager
-- XFCE Task Manager
-- Spotify Web Player (runs in Chromium)
+## Real installed programs
 
-These are actual Linux processes running in the Codespace container. Writer and Impress are Office-compatible alternatives, not Microsoft's proprietary Word/PowerPoint binaries. Spotify is the official web player in a Chromium app window.
+- **Chromium** — actual Linux browser process.
+- **LibreOffice Writer** — actual Linux word processor; opens and saves common Word-compatible formats.
+- **LibreOffice Impress** — actual Linux presentation editor; opens and saves common PowerPoint-compatible formats.
+- **XFCE Terminal** — real bash shell; commands execute in the Codespaces Linux container.
+- **Thunar** — real Linux file manager for the container filesystem.
+- **XFCE Task Manager** — real process monitor for the Codespaces container.
+- **Mousepad** — Linux text editor.
 
-## Codespaces runtime
+LibreOffice is not Microsoft's proprietary Word or PowerPoint, but it is a native Linux office suite.
 
-A Codespace is a remote Linux development container, not a permanent personal cloud PC. It runs only while the Codespace is active and may stop after its configured idle timeout. Its compute/storage usage is subject to the user's GitHub Codespaces quota and plan. Files in the Codespace workspace persist across stop/start, but processes and the graphical session must be started again.
+The desktop starts with Thunar and Terminal open, a dark Arc window theme, Papirus icons, a custom teal/blue geometric wallpaper, a centered Plank dock and a bottom XFCE panel.
 
-The Codespace desktop is accessed through GitHub's forwarded port. The React/Vite site on port 5173 and FastAPI API on port 8000 are separate from the noVNC Linux desktop on port 6080.
+## Runtime and persistence
 
-## GitHub Pages
+- The Linux desktop runs only while the Codespace is running. Codespaces can stop after an idle timeout.
+- Files saved under the Codespaces workspace/home persist according to the Codespaces storage lifecycle; live graphical processes are restarted when the container starts again.
+- The noVNC screen is a remote desktop stream, not an iframe for each app.
+- GitHub Pages only hosts the static project/launcher page. It does not host the running Linux desktop.
 
-GitHub Pages can host the static React control panel, but it cannot host or keep the Linux desktop process alive. The actual desktop must be accessed through the running Codespace's private forwarded port.
-
-## Build locally
+## Local development
 
 ```bash
 npm install
 npm run dev
+```
+
+To build the container image locally:
+
+```bash
+docker build -f .devcontainer/Dockerfile .devcontainer
 ```
