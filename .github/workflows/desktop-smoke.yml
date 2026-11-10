@@ -22,27 +22,32 @@ jobs:
       - name: Build the Codespaces desktop image
         run: docker build --pull -f .devcontainer/Dockerfile -t browseros-linux-desktop .devcontainer
 
+      - name: Check the non-root Codespaces user
+        run: docker run --rm browseros-linux-desktop id vscode
+
       - name: Start a real XFCE desktop in the container
         run: |
-          docker run -d --name browseros-linux-test --shm-size=1g \
+          docker run -d --name browseros-linux-test --user vscode --shm-size=1g \
+            -e HOME=/home/vscode -e DISPLAY=:1 \
             -p 6080:6080 \
             -v "$PWD:/workspaces/BrowserOS" \
             -w /workspaces/BrowserOS \
             browseros-linux-desktop \
             bash -lc "bash .devcontainer/start-desktop.sh && sleep infinity"
 
-      - name: Verify Linux apps, desktop processes and noVNC
+      - name: Verify Linux apps, native windows and noVNC
         run: |
           for attempt in $(seq 1 45); do
-            if curl -fsS http://127.0.0.1:6080/vnc.html >/dev/null; then
+            if curl -fsS http://127.0.0.1:6080/vnc.html >/dev/null 2>&1; then
               break
             fi
             sleep 1
           done
 
           curl -fsS http://127.0.0.1:6080/vnc.html | grep -qi 'noVNC'
+          sleep 8
 
-          docker exec browseros-linux-test bash -lc '
+          docker exec --user vscode -e HOME=/home/vscode -e DISPLAY=:1 browseros-linux-test bash -lc '
             set -e
             command -v chromium
             command -v libreoffice
@@ -55,18 +60,32 @@ jobs:
             pgrep -a xfce4-session
             pgrep -a xfwm4
             pgrep -a xfce4-panel
-            pgrep -a thunar
-            pgrep -a xfce4-terminal
-            DISPLAY=:1 xwd -root -silent -out /tmp/browseros-desktop.xwd
-            test -s /tmp/browseros-desktop.xwd
-            echo "PASS: native Linux desktop, terminal, file manager, task manager packages and noVNC are running."
+            pgrep -afi "[t]hunar"
+            pgrep -afi "[x]fce4-terminal"
+            pgrep -a plank
+            DISPLAY=:1 import -window root /tmp/browseros-desktop.png
+            test -s /tmp/browseros-desktop.png
+            echo "PASS: real XFCE session, Linux apps, desktop windows and noVNC are running."
           '
+
+      - name: Save desktop screenshot
+        if: success()
+        run: docker cp browseros-linux-test:/tmp/browseros-desktop.png ./browseros-desktop.png
+
+      - name: Upload desktop screenshot
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browseros-linux-desktop-preview
+          path: browseros-desktop.png
+          if-no-files-found: error
+          retention-days: 3
 
       - name: Show container logs on failure
         if: failure()
         run: |
           docker logs browseros-linux-test || true
-          docker exec browseros-linux-test bash -lc 'cat ~/.vnc/*.log ~/.vnc/websockify.log 2>/dev/null || true' || true
+          docker exec --user vscode -e HOME=/home/vscode browseros-linux-test bash -lc 'cat ~/.vnc/*.log ~/.cache/browseros-session-setup.log /tmp/browseros-*.log 2>/dev/null || true' || true
 
       - name: Cleanup
         if: always()
