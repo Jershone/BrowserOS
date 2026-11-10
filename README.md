@@ -13,8 +13,8 @@ This is not a JavaScript operating-system simulation:
 
 ## Open the real desktop
 
-1. Open this repository: https://github.com/Jershone/BrowserOS
-2. Create a Codespace on the `main` branch, or open your existing Codespace.
+1. Open the [Create BrowserOS Codespace](https://github.com/codespaces/new?repo=Jershone/BrowserOS&ref=main) link.
+2. Choose a machine type and create the Codespace. You can also open an existing Codespace.
 3. For a new Codespace, the Docker image builds automatically. For an existing Codespace, pull the latest `main` changes and run **Codespaces: Rebuild Container** from the Command Palette. This is required because the desktop packages are installed in the Docker image.
 4. Wait for the container rebuild and the post-start command. It launches XFCE, TigerVNC and noVNC.
 5. Codespaces automatically forwards port **6080** and opens the browser desktop. If it does not, open the **Ports** tab and open **BrowserOS Linux Desktop**.
