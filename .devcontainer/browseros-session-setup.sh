@@ -44,7 +44,7 @@ write_app "browseros-files" "Files" "thunar" "system-file-manager" "Linux file m
 write_app "browseros-task-manager" "Task Manager" "xfce4-taskmanager" "utilities-system-monitor" "Linux process manager"
 write_app "browseros-settings" "Settings" "xfce4-settings-manager" "preferences-system" "Desktop settings"
 write_app "browseros-editor" "Text Editor" "mousepad" "accessories-text-editor" "Linux text editor"
-write_app "browseros-flight-game" "Extreme Tux Racer" "etr" "extremetuxracer" "Playable 3D Linux snow racing game"
+write_app "browseros-flight-game" "Extreme Tux Racer" "/usr/games/etr" "etr" "Playable 3D Linux snow racing game"
 write_app "browseros-app-store" "App Store" "browseros-app-store" "synaptic" "Install and remove real Debian Linux applications"
 write_app "browseros-software" "Synaptic Package Manager" "xfce4-terminal --title=Synaptic\ Package\ Manager --command='sudo synaptic'" "synaptic" "Advanced Debian package manager"
 
