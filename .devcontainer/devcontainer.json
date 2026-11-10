@@ -1,23 +1,13 @@
 {
-  "name": "BrowserOS Linux Desktop",
+  "name": "BrowserOS Real Linux Desktop",
   "build": { "dockerfile": "Dockerfile" },
-  "forwardPorts": [5173, 8000, 6080],
+  "forwardPorts": [6080],
   "portsAttributes": {
-    "5173": {
-      "label": "BrowserOS Control Panel",
-      "onAutoForward": "notify",
-      "visibility": "private"
-    },
-    "8000": {
-      "label": "BrowserOS API",
-      "visibility": "private"
-    },
     "6080": {
-      "label": "BrowserOS Linux Desktop (noVNC)",
+      "label": "BrowserOS Linux Desktop",
       "onAutoForward": "openBrowser",
       "visibility": "private"
     }
   },
-  "postCreateCommand": "npm install && pip install -r requirements.txt",
   "postStartCommand": "bash .devcontainer/start-desktop.sh"
 }
