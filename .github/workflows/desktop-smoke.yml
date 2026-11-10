@@ -54,10 +54,18 @@ jobs:
             command -v xfce4-terminal
             command -v xfce4-taskmanager
             command -v synaptic
-            command -v etr
+            test -x /usr/games/etr
             command -v browseros-app-store
             sudo -n true
             bash -n /usr/local/bin/browseros-app-store
+            sudo -n --preserve-env=DISPLAY,XAUTHORITY synaptic >/tmp/browseros-app-store-test.log 2>&1 &
+            app_store_pid=$!
+            for attempt in $(seq 1 15); do
+              if kill -0 "$app_store_pid" 2>/dev/null; then break; fi
+              sleep 1
+            done
+            kill -0 "$app_store_pid"
+            kill "$app_store_pid" || true
             command -v tigervncserver
             command -v websockify
             command -v browser-os
