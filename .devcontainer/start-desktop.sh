@@ -2,7 +2,7 @@
 set -euo pipefail
 
 export DISPLAY=:1
-mkdir -p "$HOME/.vnc" "$HOME/Desktop"
+mkdir -p "$HOME/.vnc" "$HOME/.config/autostart"
 
 cat > "$HOME/.vnc/xstartup" <<'XSTART'
 #!/bin/sh
@@ -10,45 +10,39 @@ unset SESSION_MANAGER
 unset DBUS_SESSION_BUS_ADDRESS
 exec dbus-launch --exit-with-session startxfce4
 XSTART
-chmod +x "$HOME/.vnc/xstartup"
+chmod 0700 "$HOME/.vnc/xstartup"
 
-# Create useful launchers on the Linux desktop.
-make_launcher() {
-  local filename="$1" name="$2" exec_cmd="$3" icon="$4"
-  cat > "$HOME/Desktop/$filename.desktop" <<EOF
+cat > "$HOME/.config/autostart/browseros-session.desktop" <<'AUTOSTART'
 [Desktop Entry]
-Version=1.0
 Type=Application
-Name=$name
-Exec=$exec_cmd
-Icon=$icon
-Terminal=false
-Categories=Utility;
-EOF
-  chmod +x "$HOME/Desktop/$filename.desktop"
-}
-make_launcher browseros-browser "Browser (Chromium)" "chromium --no-sandbox --disable-dev-shm-usage" chromium
-make_launcher browseros-writer "Writer" "libreoffice --writer" libreoffice-writer
-make_launcher browseros-impress "Impress" "libreoffice --impress" libreoffice-impress
-make_launcher browseros-terminal "Terminal" "xfce4-terminal" utilities-terminal
-make_launcher browseros-files "Files" "thunar" system-file-manager
-make_launcher browseros-taskmgr "Task Manager" "xfce4-taskmanager" utilities-system-monitor
-make_launcher browseros-spotify "Spotify Web Player" "chromium --no-sandbox --app=https://open.spotify.com" multimedia-audio-player
+Name=BrowserOS Desktop Setup
+Comment=Apply BrowserOS theme and launch native Linux desktop tools
+Exec=/usr/local/bin/browseros-session-setup
+OnlyShowIn=XFCE;
+X-GNOME-Autostart-enabled=true
+NoDisplay=true
+AUTOSTART
 
-# Apply a dark, clean desktop theme and a consistent icon set.
-xfconf-query -c xsettings -p /Net/ThemeName -s "Arc-Dark" --create -t string 2>/dev/null || true
-xfconf-query -c xsettings -p /Net/IconThemeName -s "Papirus-Dark" --create -t string 2>/dev/null || true
-xfconf-query -c xfwm4 -p /general/theme -s "Arc-Dark" --create -t string 2>/dev/null || true
-
-# Start a real XFCE desktop in a virtual display.
-if ! pgrep -f "Xtigervnc :1" >/dev/null 2>&1; then
-  vncserver :1 -localhost yes -geometry 1600x900 -depth 24 -SecurityTypes None
+# The VNC server listens only on localhost. The only browser entry point is
+# the Codespaces-forwarded, private noVNC port (6080).
+if ! tigervncserver -list 2>/dev/null | grep -qE '(^|[[:space:]])1([[:space:]]|$)|:1'; then
+  tigervncserver :1 -localhost yes -SecurityTypes None \
+    -geometry 1600x900 -depth 24 -xstartup "$HOME/.vnc/xstartup"
 fi
 
-# Expose the VNC framebuffer through a browser-compatible WebSocket endpoint.
-if ! pgrep -f "websockify.*6080" >/dev/null 2>&1; then
-  nohup websockify --web=/usr/share/novnc 6080 localhost:5901 > "$HOME/.vnc/websockify.log" 2>&1 &
+if ! pgrep -u "$(id -u)" -f '[w]ebsockify.*6080' >/dev/null 2>&1; then
+  nohup websockify --web=/usr/share/novnc 0.0.0.0:6080 127.0.0.1:5901 \
+    > "$HOME/.vnc/websockify.log" 2>&1 &
 fi
 
-echo "BrowserOS Linux desktop started."
-echo "Open forwarded port 6080 and choose /vnc.html?autoconnect=true&resize=scale."
+# Wait briefly for the web desktop endpoint to listen.
+for attempt in $(seq 1 30); do
+  if curl -fsS http://127.0.0.1:6080/vnc.html >/dev/null 2>&1; then
+    echo "BrowserOS Linux desktop is ready on port 6080."
+    exit 0
+  fi
+  sleep 1
+done
+
+echo "noVNC did not become ready. Check ~/.vnc/*.log and ~/.vnc/websockify.log." >&2
+exit 1
