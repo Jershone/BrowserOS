@@ -8,7 +8,7 @@ RUN rm -f /etc/apt/sources.list.d/yarn.list /etc/apt/sources.list.d/yarn.sources
  && apt-get update \
  && apt-get install -y --no-install-recommends \
     xfce4 xfce4-terminal xfce4-taskmanager thunar thunar-archive-plugin tumbler \
-    chromium libreoffice-writer libreoffice-impress mousepad synaptic \
+    chromium libreoffice-writer libreoffice-impress mousepad synaptic gnome-software packagekit packagekit-tools \
     tigervnc-standalone-server tigervnc-common novnc websockify \
     plank wmctrl \
     papirus-icon-theme arc-theme gtk2-engines-murrine \
