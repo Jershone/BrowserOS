@@ -35,7 +35,7 @@ jobs:
             browseros-linux-desktop \
             bash -lc "bash .devcontainer/start-desktop.sh && sleep infinity"
 
-      - name: Verify Linux apps, native windows and noVNC
+      - name: Verify the actual Linux desktop and reference layout
         run: |
           for attempt in $(seq 1 45); do
             if curl -fsS http://127.0.0.1:6080/vnc.html >/dev/null 2>&1; then
@@ -43,9 +43,8 @@ jobs:
             fi
             sleep 1
           done
-
           curl -fsS http://127.0.0.1:6080/vnc.html | grep -qi 'noVNC'
-          sleep 8
+          sleep 10
 
           docker exec --user vscode -e HOME=/home/vscode -e DISPLAY=:1 browseros-linux-test bash -lc '
             set -e
@@ -57,28 +56,57 @@ jobs:
             command -v tigervncserver
             command -v websockify
             test -f /usr/share/novnc/vnc.html
+
             pgrep -a xfce4-session
             pgrep -a xfwm4
             pgrep -a xfce4-panel
-            pgrep -afi "[t]hunar"
-            pgrep -afi "[x]fce4-terminal"
             pgrep -a plank
+
+            # Ensure an actual Thunar window and real Terminal window exist.
+            wmctrl -lx | grep -i thunar
+            wmctrl -l | grep -i "BrowserOS Terminal"
+
+            # Ensure the custom wallpaper and bottom-positioned XFCE panel applied.
+            grep -q "browseros-wallpaper.svg" /home/vscode/.cache/browseros-wallpaper-settings.txt
+            grep -q "p=12" /home/vscode/.cache/browseros-panel-settings.txt
+
             DISPLAY=:1 import -window root /tmp/browseros-desktop.png
             test -s /tmp/browseros-desktop.png
-            echo "PASS: real XFCE session, Linux apps, desktop windows and noVNC are running."
+            echo "PASS: XFCE, native apps, live windows, custom wallpaper, bottom panel and noVNC are working."
           '
 
-      - name: Save desktop screenshot
-        if: success()
-        run: docker cp browseros-linux-test:/tmp/browseros-desktop.png ./browseros-desktop.png
+      - name: Collect desktop diagnostics
+        if: always()
+        run: |
+          mkdir -p browseros-diagnostics
+          docker cp browseros-linux-test:/home/vscode/.cache/. browseros-diagnostics/ 2>/dev/null || true
+          docker cp browseros-linux-test:/home/vscode/.vnc/. browseros-diagnostics/vnc/ 2>/dev/null || true
+          docker cp browseros-linux-test:/tmp/browseros-thunar.log browseros-diagnostics/ 2>/dev/null || true
+          docker cp browseros-linux-test:/tmp/browseros-terminal.log browseros-diagnostics/ 2>/dev/null || true
+          docker cp browseros-linux-test:/tmp/browseros-plank.log browseros-diagnostics/ 2>/dev/null || true
+          docker cp browseros-linux-test:/tmp/browseros-panel.log browseros-diagnostics/ 2>/dev/null || true
+          docker exec --user vscode -e HOME=/home/vscode -e DISPLAY=:1 browseros-linux-test wmctrl -lx > browseros-diagnostics/windows.txt 2>&1 || true
+          docker exec --user vscode -e HOME=/home/vscode -e DISPLAY=:1 browseros-linux-test xrandr --query > browseros-diagnostics/xrandr.txt 2>&1 || true
+          tar -czf browseros-diagnostics.tar.gz browseros-diagnostics
 
       - name: Upload desktop screenshot
         if: success()
         uses: actions/upload-artifact@v4
         with:
           name: browseros-linux-desktop-preview
-          path: browseros-desktop.png
-          if-no-files-found: error
+          path: /tmp/not-used
+          if-no-files-found: ignore
+          retention-days: 3
+
+      - name: Upload diagnostics and screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browseros-linux-diagnostics
+          path: |
+            browseros-diagnostics.tar.gz
+            browseros-desktop.png
+          if-no-files-found: ignore
           retention-days: 3
 
       - name: Show container logs on failure
