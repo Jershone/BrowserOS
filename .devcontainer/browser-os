@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+COMMAND="${1:-help}"
+WORKSPACE=""
+
+# Prefer the current BrowserOS checkout, then the standard Codespaces path.
+if [ -f "$PWD/.devcontainer/start-desktop.sh" ]; then
+  WORKSPACE="$PWD"
+elif [ -n "${CODESPACE_VSCODE_FOLDER:-}" ] && [ -f "$CODESPACE_VSCODE_FOLDER/.devcontainer/start-desktop.sh" ]; then
+  WORKSPACE="$CODESPACE_VSCODE_FOLDER"
+elif [ -f "/workspaces/BrowserOS/.devcontainer/start-desktop.sh" ]; then
+  WORKSPACE="/workspaces/BrowserOS"
+fi
+
+case "$COMMAND" in
+  run|start)
+    if [ -z "$WORKSPACE" ]; then
+      echo "BrowserOS workspace not found."
+      echo "Open the BrowserOS repository in this Codespace, then run: browser-os run"
+      exit 1
+    fi
+    echo "Starting the BrowserOS Linux desktop..."
+    bash "$WORKSPACE/.devcontainer/start-desktop.sh"
+    echo
+    echo "BrowserOS is running. Open forwarded port 6080 (BrowserOS Linux Desktop)."
+    if [ -n "${CODESPACE_NAME:-}" ] && [ -n "${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN:-}" ]; then
+      echo "Desktop URL: https://${CODESPACE_NAME}-6080.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}/vnc.html?autoconnect=true&resize=scale"
+    fi
+    ;;
+  status)
+    if curl -fsS http://127.0.0.1:6080/vnc.html >/dev/null 2>&1; then
+      echo "BrowserOS desktop is running on port 6080."
+    else
+      echo "BrowserOS desktop is not running. Start it with: browser-os run"
+      exit 1
+    fi
+    ;;
+  help|-h|--help)
+    echo "BrowserOS desktop launcher"
+    echo
+    echo "Usage:"
+    echo "  browser-os run      Start the Linux desktop and noVNC browser endpoint"
+    echo "  browser-os status   Check whether the desktop endpoint is running"
+    echo "  browser-os help     Show this help"
+    ;;
+  *)
+    echo "Unknown command: $COMMAND"
+    echo "Run 'browser-os help' for usage."
+    exit 2
+    ;;
+esac
