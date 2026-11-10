@@ -22,6 +22,16 @@ This is not a JavaScript operating-system simulation:
 
 Keep port 6080 **Private**. The VNC server itself listens only on localhost inside the container; the browser entry point is the Codespaces forwarded port. Do not change it to Public.
 
+## Start BrowserOS with one command
+
+After the Codespace has been created or rebuilt, open its integrated terminal and run:
+
+```bash
+browser-os run
+```
+
+This starts the XFCE desktop, TigerVNC and noVNC endpoint. Codespaces forwards port **6080** automatically; open the **BrowserOS Linux Desktop** port if the browser does not open by itself. The command is safe to run again if the desktop is already running. Use `browser-os status` to check it or `browser-os help` for usage.
+
 ## Real installed programs
 
 - **Chromium** — actual Linux browser process.
