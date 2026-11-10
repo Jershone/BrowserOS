@@ -58,6 +58,9 @@ jobs:
             command -v packagekitd
             command -v tigervncserver
             command -v websockify
+            command -v browser-os
+            browser-os help
+            bash -n /usr/local/bin/browser-os
             test -f /usr/share/novnc/vnc.html
 
             pgrep -a xfce4-session
