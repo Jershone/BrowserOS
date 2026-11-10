@@ -41,8 +41,8 @@ This starts the XFCE desktop, TigerVNC and noVNC endpoint. Codespaces forwards p
 - **Thunar** — real Linux file manager for the container filesystem.
 - **XFCE Task Manager** — real process monitor for the Codespaces container.
 - **Mousepad** — Linux text editor.
-- **App Store (GNOME Software)** — graphical application browser backed by Debian APT repositories through PackageKit.
-- **Synaptic Package Manager** — advanced graphical APT package manager for installing and removing Debian packages.
+- **App Store (Synaptic)** — real graphical Debian package manager for searching, installing and removing Linux applications. It launches with administrator permissions and does not depend on GNOME Software or PackageKit.
+- **Extreme Tux Racer** — playable native 3D snow-racing game.
 
 LibreOffice is not Microsoft's proprietary Word or PowerPoint, but it is a native Linux office suite.
 
