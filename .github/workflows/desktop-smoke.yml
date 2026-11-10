@@ -89,14 +89,9 @@ jobs:
           docker exec --user vscode -e HOME=/home/vscode -e DISPLAY=:1 browseros-linux-test xrandr --query > browseros-diagnostics/xrandr.txt 2>&1 || true
           tar -czf browseros-diagnostics.tar.gz browseros-diagnostics
 
-      - name: Upload desktop screenshot
+      - name: Save desktop screenshot
         if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: browseros-linux-desktop-preview
-          path: /tmp/not-used
-          if-no-files-found: ignore
-          retention-days: 3
+        run: docker cp browseros-linux-test:/tmp/browseros-desktop.png ./browseros-desktop.png
 
       - name: Upload diagnostics and screenshot
         if: always()
