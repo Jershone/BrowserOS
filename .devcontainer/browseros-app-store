@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Synaptic is a real graphical Debian package manager. Launch it directly as
+# root so it does not depend on GNOME Software, PackageKit or polkit services.
+if ! sudo -n true 2>/dev/null; then
+  if command -v zenity >/dev/null 2>&1; then
+    zenity --error --title="BrowserOS App Store" --text="Package installation needs administrator access, but passwordless sudo is unavailable in this Codespace."
+  else
+    printf '%s\n' "BrowserOS App Store: passwordless sudo is unavailable." >&2
+  fi
+  exit 1
+fi
+
+exec sudo -n synaptic
