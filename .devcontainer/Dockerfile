@@ -4,7 +4,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV DISPLAY=:1
 
 # A real Linux desktop session and real Linux applications.
-RUN apt-get update \
+RUN rm -f /etc/apt/sources.list.d/yarn.list /etc/apt/sources.list.d/yarn.sources \
+ && apt-get update \
  && apt-get install -y --no-install-recommends \
     xfce4 xfce4-terminal xfce4-taskmanager thunar thunar-archive-plugin tumbler \
     chromium libreoffice-writer libreoffice-impress mousepad \
