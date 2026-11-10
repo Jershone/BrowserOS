@@ -8,7 +8,7 @@ RUN rm -f /etc/apt/sources.list.d/yarn.list /etc/apt/sources.list.d/yarn.sources
  && apt-get update \
  && apt-get install -y --no-install-recommends \
     xfce4 xfce4-terminal xfce4-taskmanager thunar thunar-archive-plugin tumbler \
-    chromium libreoffice-writer libreoffice-impress mousepad synaptic gnome-software packagekit packagekit-tools packagekit-plugin-aptcc \
+    chromium libreoffice-writer libreoffice-impress mousepad synaptic extremetuxracer \
     tigervnc-standalone-server tigervnc-common novnc websockify \
     plank wmctrl \
     papirus-icon-theme arc-theme gtk2-engines-murrine \
@@ -24,4 +24,5 @@ RUN chmod 0755 /usr/local/bin/browseros-session-setup
 
 
 COPY browser-os /usr/local/bin/browser-os
-RUN chmod 0755 /usr/local/bin/browser-os
+COPY browseros-app-store /usr/local/bin/browseros-app-store
+RUN chmod 0755 /usr/local/bin/browser-os /usr/local/bin/browseros-app-store
