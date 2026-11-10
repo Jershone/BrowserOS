@@ -20,6 +20,8 @@ export default function App() {
   const desktopUrl = useMemo(getDesktopUrl, []);
   const onCodespaces = /app\.github\.dev$/.test(window.location.hostname);
   const local = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const destination = onCodespaces || local ? desktopUrl : 'https://github.com/Jershone/BrowserOS/codespaces';
+  const buttonText = onCodespaces || local ? 'Open Linux desktop' : 'Open this project in Codespaces';
 
   return (
     <main className="portal">
@@ -33,9 +35,9 @@ export default function App() {
         <div className="eyebrow"><span/> REAL LINUX SESSION</div>
         <h1>Your Linux desktop.<br/><em>Inside your browser.</em></h1>
         <p className="portal-lede">BrowserOS streams a real XFCE desktop running in your GitHub Codespace. The terminal, file manager, browser and office applications are Linux programs running in the remote environment.</p>
-        <a className="launch-desktop" href={desktopUrl}><Monitor size={18}/> Open Linux desktop <ArrowUpRight size={17}/></a>
-        {!onCodespaces && !local && <div className="portal-warning"><Info size={16}/> This is the static project page. Start the Codespace and open its private port 6080 to connect to Linux.</div>}
-        <div className="portal-note">When the Codespace is running, this opens the remote desktop stream — not a set of simulated application windows.</div>
+        <a className="launch-desktop" href={destination}><Monitor size={18}/> {buttonText} <ArrowUpRight size={17}/></a>
+        {!onCodespaces && !local && <div className="portal-warning"><Info size={16}/> The Linux desktop needs a running Codespace. Open this project in Codespaces, rebuild its container, then use the private forwarded port 6080.</div>}
+        <div className="portal-note">This page is only a launcher. The actual desktop is streamed from the Linux container; it is not simulated with JavaScript windows.</div>
       </section>
 
       <section className="native-apps">
