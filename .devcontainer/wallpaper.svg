@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0" stop-color="#10bd91"/><stop offset=".42" stop-color="#079f9d"/><stop offset=".74" stop-color="#087fbc"/><stop offset="1" stop-color="#0671c6"/></linearGradient>
+ <radialGradient id="glow" cx=".18" cy=".78" r=".8"><stop offset="0" stop-color="#00df9e" stop-opacity=".5"/><stop offset="1" stop-color="#00df9e" stop-opacity="0"/></radialGradient>
+ <pattern id="mesh" width="34" height="30" patternUnits="userSpaceOnUse"><path d="M17 0 34 10 34 20 17 30 0 20 0 10Z" fill="none" stroke="#d5f7f6" stroke-opacity=".09" stroke-width="1"/></pattern>
+ <pattern id="hex" width="86" height="74" patternUnits="userSpaceOnUse"><path d="M21.5 1 64.5 1 85.5 37 64.5 73 21.5 73 .5 37Z" fill="none" stroke="#d8f6ff" stroke-opacity=".2" stroke-width="2"/></pattern>
+ <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#67f3d2"/><stop offset=".5" stop-color="#8ee1fa"/><stop offset="1" stop-color="#68b9ee"/></linearGradient>
+ <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="12"/></filter>
+</defs>
+<rect width="1600" height="900" fill="url(#bg)"/><rect width="1600" height="900" fill="url(#glow)"/><rect width="1600" height="900" fill="url(#mesh)"/>
+<path d="M1130 0H1600V900H1370L1600 610V320Z" fill="#0756b3" opacity=".15"/>
+<rect x="1280" y="0" width="320" height="900" fill="url(#hex)" opacity=".65"/>
+<g opacity=".45" fill="#b6e9ff">
+ <path d="M1430 120 1460 103 1490 120 1490 155 1460 172 1430 155Z"/><path d="M1515 245 1545 228 1575 245 1575 280 1545 297 1515 280Z"/>
+ <path d="M1350 300 1380 283 1410 300 1410 335 1380 352 1350 335Z"/><path d="M1475 408 1505 391 1535 408 1535 443 1505 460 1475 443Z"/>
+ <path d="M1390 520 1420 503 1450 520 1450 555 1420 572 1390 555Z"/><path d="M1518 635 1548 618 1578 635 1578 670 1548 687 1518 670Z"/>
+ <path d="M1300 685 1330 668 1360 685 1360 720 1330 737 1300 720Z"/>
+</g>
+<g transform="translate(1458 148)">
+ <circle r="110" fill="#062c4d" opacity=".28" filter="url(#shadow)"/>
+ <circle r="98" fill="#092f47" stroke="#58d4ce" stroke-width="5"/>
+ <circle r="82" fill="#091f34" stroke="#2b7891" stroke-width="13"/>
+ <circle r="65" fill="#18283e" stroke="#54c6c2" stroke-opacity=".45" stroke-width="1.5"/>
+ <circle r="48" fill="#243449"/><circle r="5" fill="#91d8df" opacity=".7"/>
+ <g stroke="#c7f4ec" stroke-width="2" opacity=".85"><path d="M0-91v9M0 82v9M-91 0h9M82 0h9M-64-64l7 7M57 57l7 7M64-64l-7 7M-57 57l-7 7"/></g>
+ <path d="M0-93A93 93 0 0 1 92 0" fill="none" stroke="url(#ring)" stroke-width="4" stroke-linecap="round"/>
+ <circle cx="0" cy="-91" r="3" fill="#c9fff1"/>
+</g>
+<g transform="translate(1352 280)"><rect width="190" height="40" rx="20" fill="#f7ffff" fill-opacity=".94"/><circle cx="24" cy="20" r="8" fill="#f4bd67"/><path d="M19 13q7-13 15-1" fill="none" stroke="#f4bd67" stroke-width="3" stroke-linecap="round"/><text x="48" y="25" font-family="Noto Sans, sans-serif" font-size="15" fill="#34556a">BrowserOS Desktop</text></g>
+<g fill="#e2ffff" opacity=".5"><circle cx="115" cy="126" r="2"/><circle cx="245" cy="250" r="1.8"/><circle cx="540" cy="104" r="1.4"/><circle cx="760" cy="370" r="1.4"/><circle cx="1080" cy="715" r="1.7"/><circle cx="920" cy="156" r="1.5"/><circle cx="330" cy="775" r="1.6"/></g>
+</svg>
