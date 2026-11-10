@@ -1,0 +1,73 @@
+name: Test real Linux desktop container
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.devcontainer/**'
+      - '.github/workflows/desktop-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  linux-desktop:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build the Codespaces desktop image
+        run: docker build --pull -f .devcontainer/Dockerfile -t browseros-linux-desktop .devcontainer
+
+      - name: Start a real XFCE desktop in the container
+        run: |
+          docker run -d --name browseros-linux-test --shm-size=1g \
+            -p 6080:6080 \
+            -v "$PWD:/workspaces/BrowserOS" \
+            -w /workspaces/BrowserOS \
+            browseros-linux-desktop \
+            bash -lc "bash .devcontainer/start-desktop.sh && sleep infinity"
+
+      - name: Verify Linux apps, desktop processes and noVNC
+        run: |
+          for attempt in $(seq 1 45); do
+            if curl -fsS http://127.0.0.1:6080/vnc.html >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+
+          curl -fsS http://127.0.0.1:6080/vnc.html | grep -qi 'noVNC'
+
+          docker exec browseros-linux-test bash -lc '
+            set -e
+            command -v chromium
+            command -v libreoffice
+            command -v thunar
+            command -v xfce4-terminal
+            command -v xfce4-taskmanager
+            command -v tigervncserver
+            command -v websockify
+            test -f /usr/share/novnc/vnc.html
+            pgrep -a xfce4-session
+            pgrep -a xfwm4
+            pgrep -a xfce4-panel
+            pgrep -a thunar
+            pgrep -a xfce4-terminal
+            DISPLAY=:1 xwd -root -silent -out /tmp/browseros-desktop.xwd
+            test -s /tmp/browseros-desktop.xwd
+            echo "PASS: native Linux desktop, terminal, file manager, task manager packages and noVNC are running."
+          '
+
+      - name: Show container logs on failure
+        if: failure()
+        run: |
+          docker logs browseros-linux-test || true
+          docker exec browseros-linux-test bash -lc 'cat ~/.vnc/*.log ~/.vnc/websockify.log 2>/dev/null || true' || true
+
+      - name: Cleanup
+        if: always()
+        run: docker rm -f browseros-linux-test || true
