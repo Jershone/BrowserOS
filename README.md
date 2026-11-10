@@ -31,6 +31,8 @@ Keep port 6080 **Private**. The VNC server itself listens only on localhost insi
 - **Thunar** — real Linux file manager for the container filesystem.
 - **XFCE Task Manager** — real process monitor for the Codespaces container.
 - **Mousepad** — Linux text editor.
+- **App Store (GNOME Software)** — graphical application browser backed by Debian APT repositories through PackageKit.
+- **Synaptic Package Manager** — advanced graphical APT package manager for installing and removing Debian packages.
 
 LibreOffice is not Microsoft's proprietary Word or PowerPoint, but it is a native Linux office suite.
 
