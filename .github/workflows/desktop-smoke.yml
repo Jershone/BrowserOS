@@ -78,7 +78,7 @@ jobs:
             grep -q "browseros-wallpaper.svg" /home/vscode/.cache/browseros-wallpaper-settings.txt
             grep -q "p=12" /home/vscode/.cache/browseros-panel-settings.txt
             test "$(xfconf-query -c xfce4-desktop -p /desktop-icons/style)" = "0"
-            ! xfconf-query -c xfce4-panel -p /panels -a 2>/dev/null | grep -q "panel-2"
+            test "$(wmctrl -lG | grep -c "xfce4-panel.Xfce4-panel")" = "1"
 
             DISPLAY=:1 import -window root /tmp/browseros-desktop.png
             test -s /tmp/browseros-desktop.png
