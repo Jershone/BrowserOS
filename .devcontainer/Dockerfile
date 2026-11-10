@@ -11,7 +11,7 @@ RUN apt-get update \
     tigervnc-standalone-server tigervnc-common novnc websockify \
     plank picom wmctrl \
     papirus-icon-theme arc-theme gtk2-engines-murrine \
-    dbus-x11 x11-xserver-utils x11-utils xauth \
+    dbus-x11 x11-xserver-utils x11-utils xauth curl \
     fonts-noto-core fonts-noto-color-emoji fonts-liberation fonts-dejavu-core \
     librsvg2-common desktop-file-utils \
  && apt-get clean \
