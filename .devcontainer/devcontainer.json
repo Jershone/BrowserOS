@@ -14,5 +14,6 @@
     }
   },
   "postStartCommand": "bash .devcontainer/start-desktop.sh",
-  "postCreateCommand": "npm install --no-audit --no-fund"
+  "postCreateCommand": "npm install --no-audit --no-fund",
+  "remoteUser": "vscode"
 }
