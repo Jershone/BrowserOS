@@ -1,0 +1,77 @@
+name: Test BrowserOS Mint Cinnamon desktop
+
+on:
+  push:
+    branches: [linux-mint]
+    paths:
+      - '.devcontainer/**'
+      - '.github/workflows/mint-desktop-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cinnamon-desktop:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Cinnamon desktop image
+        run: docker build --pull -f .devcontainer/Dockerfile -t browseros-mint .devcontainer
+
+      - name: Verify desktop packages
+        run: |
+          docker run --rm browseros-mint bash -lc '
+            set -e
+            command -v cinnamon-session
+            command -v nemo
+            command -v gnome-terminal
+            command -v gnome-system-monitor
+            command -v firefox-esr
+            command -v libreoffice
+            command -v flatpak
+            command -v gnome-software
+            command -v tigervncserver
+            command -v websockify
+            command -v browser-os
+            command -v browseros-app-store
+            test -f /usr/share/novnc/vnc.html
+            browser-os help
+            bash -n /usr/local/bin/browseros-app-store
+          '
+
+      - name: Start desktop and verify browser endpoint
+        run: |
+          docker run -d --name browseros-mint-test --user vscode --shm-size=1g \
+            -e HOME=/home/vscode -e DISPLAY=:1 \
+            -p 6080:6080 \
+            -v "$PWD:/workspaces/BrowserOS" \
+            -w /workspaces/BrowserOS \
+            browseros-mint bash -lc "bash .devcontainer/start-desktop.sh && sleep infinity"
+          for attempt in $(seq 1 45); do
+            if curl -fsS http://127.0.0.1:6080/vnc.html >/dev/null 2>&1; then
+              break
+            fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:6080/vnc.html | grep -qi 'noVNC'
+          docker exec --user vscode -e HOME=/home/vscode -e DISPLAY=:1 browseros-mint-test bash -lc '
+            set -e
+            pgrep -a cinnamon-session
+            pgrep -a cinnamon
+            pgrep -a websockify
+            flatpak remotes --user | grep -q flathub
+            echo "PASS: Cinnamon session, Flathub user remote and noVNC endpoint are available."
+          '
+
+      - name: Show logs on failure
+        if: failure()
+        run: |
+          docker logs browseros-mint-test || true
+          docker exec --user vscode -e HOME=/home/vscode browseros-mint-test bash -lc 'cat ~/.vnc/*.log 2>/dev/null || true' || true
+
+      - name: Cleanup
+        if: always()
+        run: docker rm -f browseros-mint-test || true
