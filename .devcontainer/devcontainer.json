@@ -1,5 +1,5 @@
 {
-  "name": "BrowserOS Real Linux Desktop",
+  "name": "BrowserOS Mint Cinnamon Desktop",
   "build": {
     "dockerfile": "Dockerfile"
   },
@@ -8,12 +8,11 @@
   ],
   "portsAttributes": {
     "6080": {
-      "label": "BrowserOS Linux Desktop",
+      "label": "Cinnamon Desktop",
       "onAutoForward": "openBrowser",
       "visibility": "private"
     }
   },
   "postStartCommand": "bash .devcontainer/start-desktop.sh",
-  "postCreateCommand": "npm install --no-audit --no-fund",
   "remoteUser": "vscode"
 }
